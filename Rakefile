@@ -17,8 +17,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "tpool"
   gem.homepage = "http://github.com/kaspernj/tpool"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{A thread-pool for Ruby.}
+  gem.description = %Q{A thread-pool for Ruby that supports joining, status-checking, stopping jobs and more.}
   gem.email = "k@spernj.org"
   gem.authors = ["Kasper Johansen"]
   # dependencies defined in Gemfile
