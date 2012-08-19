@@ -12,16 +12,19 @@ class Tpool::Block
   
   #Starts running whatever block it is holding.
   def run
+    @thread_running = Thread.current
     @running = true
     
     begin
       @res = @args[:blk].call(*@args[:args], &@args[:blk])
     rescue Exception => e
       @error = e
+      @args[:tpool].on_error_call(:on_error, e)
+    ensure
+      @running = false
+      @done = true
+      @thread_running = nil
     end
-    
-    @running = false
-    @done = true
     
     if @args[:thread_starts]
       @args[:thread_starts].each do |thread|
@@ -50,6 +53,10 @@ class Tpool::Block
   
   #Raises error if one has happened in the asynced job.
   def error!
+    #Wait for error to get set if any.
+    self.join
+    
+    #Raise it if it got set.
     raise @error if @error
   end
   
@@ -66,6 +73,12 @@ class Tpool::Block
     end
     
     return self
+  end
+  
+  #Kills the current running job.
+  def kill
+    Thread.pass while !self.done? and !self.running?
+    @thread_running.raise Exception, "Should kill itself." if !self.done? and self.running?
   end
   
   def result(args = nil)
