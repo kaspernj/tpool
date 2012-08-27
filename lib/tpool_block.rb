@@ -5,6 +5,7 @@ class Tpool::Block
   def initialize(args)
     @args = args
     
+    @tpool = @args[:tpool]
     @running = false
     @done = false
     @error = nil
@@ -13,13 +14,14 @@ class Tpool::Block
   #Starts running whatever block it is holding.
   def run
     @thread_running = Thread.current
+    @thread_running.priority = @tpool.args[:priority] if @tpool.args.key?(:priority)
     @running = true
     
     begin
       @res = @args[:blk].call(*@args[:args], &@args[:blk])
     rescue Exception => e
       @error = e
-      @args[:tpool].on_error_call(:on_error, e)
+      @args[:tpool].on_error_call(:error => e, :block => self)
     ensure
       @running = false
       @done = true

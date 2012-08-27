@@ -1,6 +1,10 @@
 require "thread"
 
 class Tpool
+  attr_reader :args
+  
+  ARGS_VALID = [:threads, :priority, :on_error]
+  
   def self.const_missing(name)
     require "#{File.dirname(__FILE__)}/tpool_#{name.to_s.downcase}.rb"
     raise "Still not defined: '#{name}'." if !Tpool.const_defined?(name)
@@ -15,10 +19,15 @@ class Tpool
   
   def initialize(args)
     @args = args
+    @args.each do |key, val|
+      raise "Invalid argument given: '#{key}'." if Tpool::ARGS_VALID.index(key) == nil
+    end
+    
     @queue = Queue.new
     self.start
   end
   
+  #Starts the thread-pool. This is automatically called on initialization.
   def start
     raise "Already started." if @pool and !@pool.empty?
     
@@ -57,6 +66,7 @@ class Tpool
     block = Tpool::Block.new(
       :args => args,
       :blk => blk,
+      :tpool => self,
       :thread_starts => [Thread.current]
     )
     @queue << block
