@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Kasper Johansen"]
-  s.date = %q{2012-08-27}
+  s.date = %q{2012-08-29}
   s.description = %q{A thread-pool for Ruby that supports joining, status-checking, stopping jobs and more.}
   s.email = %q{k@spernj.org}
   s.extra_rdoc_files = [
