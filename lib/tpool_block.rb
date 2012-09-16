@@ -30,7 +30,7 @@ class Tpool::Block
     
     if @args[:thread_starts]
       @args[:thread_starts].each do |thread|
-        thread.wakeup
+        thread.wakeup if thread.alive?
       end
     end
     
